@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Scoped CSS Variables and JS</title>
 </head>
+
 <body>
   <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
 
@@ -12,19 +14,45 @@
     <input type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
 
     <label for="blur">Blur:</label>
-    <input type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+    <input type="range" name="blur" min="0" max="25" value="2" data-sizing="px">
 
     <label for="base">Base Color</label>
     <input type="color" name="base" value="#ffc600">
   </div>
 
-  <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
+  <code class="result">
+    img {
+      padding: <label id="code-spacing">10px</label>; 
+      filter: blur(<label id="code-blur">2px</label>); 
+      background: <label id="code-base">#ffc600</label>; 
+    }
+  </code>
+  <br />
+  <img src="background.jpeg">
 
   <style>
-
     /*
       misc styles, nothing to do with CSS variables
     */
+    :root {
+      --base: #c5ac1e;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    img {
+      filter: blur(var(--blur));
+      padding: var(--spacing);
+      background: var(--base);
+    }
+
+    .hl {
+      color: var(--base);
+    }
+
+    .result {
+      font-size: 24px;
+    }
 
     body {
       text-align: center;
@@ -39,16 +67,27 @@
     }
 
     .controls {
-      margin-bottom: 50px;
+      margin-bottom: 20px;
     }
 
     input {
-      width:100px;
+      width: 100px;
     }
   </style>
 
   <script>
+    const inputs = document.querySelectorAll('.controls input');
+
+    function handleUpdata() {
+      const suffix = this.dataset.sizing || '';
+      document.documentElement.style.setProperty('--' + this.name, this.value + suffix);
+      document.querySelector('#code-' + this.name).innerHTML = this.value + suffix;
+    }
+
+    inputs.forEach(input => input.addEventListener(input.getAttribute('type') === 'color' ? 'change' : 'mousemove', handleUpdata));
+
   </script>
 
 </body>
+
 </html>
